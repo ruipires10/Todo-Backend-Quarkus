@@ -3,6 +3,8 @@ package es.torres;
 import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Optional;
+
+import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
@@ -23,11 +25,8 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 @Path("/todos")
 public class TodoResource {
 
-    @ConfigProperty(name = "scheme")
-    String scheme;
-
-    @Context
-    UriInfo uriInfo;
+    @Inject
+    TodoService todoService;
 
     @GET
     @Produces({MediaType.APPLICATION_JSON})
@@ -40,16 +39,14 @@ public class TodoResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
     public Todo create(Todo newTodo) throws MalformedURLException {
-        newTodo.url = uriInfo.getAbsolutePathBuilder().scheme(scheme).build().toURL();
-        newTodo.persist();
-        return newTodo;
+        return todoService.createTodo(newTodo);
     }
 
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
     public Response deleteAll() {
-        Todo.deleteAll();
+        todoService.deleteAll();
         return Response.ok().build();
     }
 
@@ -58,8 +55,7 @@ public class TodoResource {
     @Path("{id}")
     @Transactional
     public Response deleteOne(@PathParam("id") Long id) {
-        Todo todo = Todo.findById(id);
-        todo.delete();
+       todoService.deteleById(id);
         return Response.ok().build();
     }
 
@@ -67,9 +63,7 @@ public class TodoResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{id}")
     public Todo getOne(@PathParam("id") Long id) {
-        Optional<Todo> optional = Todo.findByIdOptional(id);
-        Todo todo = optional.orElseThrow(() -> new NotFoundException("Todo does not exist!"));
-        return todo;
+       return todoService.getById(id);
     }
 
     @PUT
@@ -78,12 +72,6 @@ public class TodoResource {
     @Path("{id}")
     @Transactional
     public Todo edit(@PathParam("id") Long id, Todo updates) {
-        Optional<Todo> optional = Todo.findByIdOptional(id);
-        Todo byId = optional.orElseThrow(() -> new NotFoundException("Todo does not exist!"));
-        byId.title = updates.title;
-        byId.completed = updates.completed;
-        byId.order = updates.order;
-
-        return byId;
+       return todoService.editById(id, updates);
     }
 }
