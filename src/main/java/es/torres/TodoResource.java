@@ -10,6 +10,7 @@ import jakarta.ws.rs.GET;
 import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.PATCH;
 import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
@@ -71,7 +72,7 @@ public class TodoResource {
         return todo;
     }
 
-    @PATCH
+    @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{id}")
@@ -79,17 +80,10 @@ public class TodoResource {
     public Todo edit(@PathParam("id") Long id, Todo updates) {
         Optional<Todo> optional = Todo.findByIdOptional(id);
         Todo byId = optional.orElseThrow(() -> new NotFoundException("Todo does not exist!"));
-        merge(byId, updates);
+        byId.title = updates.title;
+        byId.completed = updates.completed;
+        byId.order = updates.order;
+
         return byId;
-    }
-
-    private void merge(Todo current, Todo todoItem) {
-        current.title = (String) (getLatest(current.title, todoItem.title));
-        current.completed = ((Boolean) getLatest(current.completed, todoItem.completed));
-        current.order = ((Integer) getLatest(current.order, todoItem.order));
-    }
-
-    private Object getLatest(Object old, Object latest) {
-        return latest == null ? old : latest;
     }
 }
