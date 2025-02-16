@@ -30,7 +30,7 @@ public class TodoResource {
 
     @GET
     @Produces({MediaType.APPLICATION_JSON})
-    public List<Todo>  getAll() {
+    public List<Todo> getAll() {
         return Todo.listAll();
     }
 
@@ -71,25 +71,4 @@ public class TodoResource {
         return todo;
     }
 
-    @PATCH
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path("{id}")
-    @Transactional
-    public Todo edit(@PathParam("id") Long id, Todo updates) {
-        Optional<Todo> optional = Todo.findByIdOptional(id);
-        Todo byId = optional.orElseThrow(() -> new NotFoundException("Todo does not exist!"));
-        merge(byId, updates);
-        return byId;
-    }
-
-    private void merge(Todo current, Todo todoItem) {
-        current.title = (String) (getLatest(current.title, todoItem.title));
-        current.completed = ((Boolean) getLatest(current.completed, todoItem.completed));
-        current.order = ((Integer) getLatest(current.order, todoItem.order));
-    }
-
-    private Object getLatest(Object old, Object latest) {
-        return latest == null ? old : latest;
-    }
 }
