@@ -25,11 +25,11 @@ public class Todo extends PanacheEntity {
     }
 
     public long getId() {
-        return this.id;
+        return super.id;
     }
 
     public Boolean getCompleted(){
-        return this.completed == null ? false : this.completed;
+        return this.completed != null ? this.completed : false;
     }
 
     public String getTitle() {
