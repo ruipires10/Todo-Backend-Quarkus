@@ -4,6 +4,8 @@ import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Optional;
 
+import es.torres.dto.InputTodoDto;
+import es.torres.dto.OutputTodoDto;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.Consumes;
@@ -30,7 +32,7 @@ public class TodoResource {
 
     @GET
     @Produces({MediaType.APPLICATION_JSON})
-    public List<Todo>  getAll() {
+    public List<OutputTodoDto>  getAll() {
         return todoService.getAll();
     }
 
@@ -38,7 +40,7 @@ public class TodoResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
-    public Todo create(Todo newTodo) throws MalformedURLException {
+    public OutputTodoDto create(InputTodoDto newTodo) throws MalformedURLException {
         return todoService.createTodo(newTodo);
     }
 
@@ -62,7 +64,7 @@ public class TodoResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{id}")
-    public Todo getOne(@PathParam("id") Long id) {
+    public OutputTodoDto getOne(@PathParam("id") Long id) {
        return todoService.getById(id);
     }
 
@@ -71,7 +73,7 @@ public class TodoResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{id}")
     @Transactional
-    public Todo edit(@PathParam("id") Long id, Todo updates) {
+    public OutputTodoDto edit(@PathParam("id") Long id, InputTodoDto updates) {
        return todoService.editById(id, updates);
     }
 }
