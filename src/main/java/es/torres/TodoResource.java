@@ -66,7 +66,7 @@ public class TodoResource {
        return todoService.getById(id);
     }
 
-    @PUT
+    @PATCH
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{id}")
