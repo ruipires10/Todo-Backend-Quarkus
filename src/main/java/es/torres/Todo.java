@@ -11,11 +11,11 @@ import jakarta.ws.rs.core.UriBuilder;
 @Entity
 public class Todo extends PanacheEntity {
 
-    private String title;
-    private Boolean completed;
+    public String title;
+    public Boolean completed;
     @Column(name = "\"order\"")
-    private Integer order;
-    private URL url;
+    public Integer order;
+    public URL url;
 
     public URL getUrl() throws URISyntaxException, MalformedURLException {
         if (this.id != null) {
@@ -28,11 +28,4 @@ public class Todo extends PanacheEntity {
         return this.completed == null ? false : this.completed;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
 }
