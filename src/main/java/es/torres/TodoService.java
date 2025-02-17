@@ -25,7 +25,7 @@ public class TodoService {
     }
 
     public Todo createTodo(Todo newTodo) throws MalformedURLException {
-        newTodo.url = uriInfo.getAbsolutePathBuilder().scheme(scheme).build().toURL();
+        newTodo.setUrl(uriInfo.getAbsolutePathBuilder().scheme(scheme).build().toURL());
         newTodo.persist();
         return newTodo;
     }
@@ -48,10 +48,17 @@ public class TodoService {
     public Todo editById(Long id, Todo updates) {
         Optional<Todo> optional = Todo.findByIdOptional(id);
         Todo byId = optional.orElseThrow(() -> new NotFoundException("Todo does not exist!"));
-        byId.title = updates.title;
-        byId.completed = updates.completed;
-        byId.order = updates.order;
-
+        merge(byId, updates);
         return byId;
+    }
+
+    private void merge(Todo current, Todo todoItem) {
+        current.setTitle((String) (getLatest(current.getTitle(), todoItem.getTitle())));
+        current.setCompleted(((Boolean) getLatest(current.getCompleted(), todoItem.getCompleted())));
+        current.setOrder(((Integer) getLatest(current.getOrder(), todoItem.getOrder())));
+    }
+
+    private Object getLatest(Object old, Object latest) {
+        return latest == null ? old : latest;
     }
 }
