@@ -24,8 +24,12 @@ public class Todo extends PanacheEntity {
         return this.url;
     }
 
+    public long getId() {
+        return super.id;
+    }
+
     public Boolean getCompleted(){
-        return this.completed == null ? false : this.completed;
+        return this.completed != null ? this.completed : false;
     }
 
     public String getTitle() {
