@@ -7,6 +7,7 @@ import jakarta.ws.rs.core.UriInfo;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import java.net.MalformedURLException;
+import java.util.List;
 import java.util.Optional;
 
 @ApplicationScoped
@@ -17,6 +18,11 @@ public class TodoService {
 
     @Context
     UriInfo uriInfo;
+
+    public List<Todo> getAll() {
+        return Todo.listAll();
+
+    }
 
     public Todo createTodo(Todo newTodo) throws MalformedURLException {
         newTodo.url = uriInfo.getAbsolutePathBuilder().scheme(scheme).build().toURL();

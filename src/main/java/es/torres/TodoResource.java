@@ -31,7 +31,7 @@ public class TodoResource {
     @GET
     @Produces({MediaType.APPLICATION_JSON})
     public List<Todo>  getAll() {
-        return Todo.listAll();
+        return todoService.getAll();
     }
 
     @POST
@@ -66,7 +66,7 @@ public class TodoResource {
        return todoService.getById(id);
     }
 
-    @PUT
+    @PATCH
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{id}")
