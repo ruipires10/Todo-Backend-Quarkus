@@ -2,6 +2,9 @@ package es.torres;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.collection.IsEmptyCollection.empty;
 import static org.hamcrest.core.Is.is;
 
 import io.quarkus.test.common.QuarkusTestResource;
@@ -136,4 +139,38 @@ public class TodoResourceTest {
             .body("title", equalTo("Patch Todo"), "completed", equalTo(true));
     }
 
+    @Test
+    public void testStatistics() {
+        given()
+                .when().delete("/todos")
+                .then()
+                .statusCode(HttpStatus.SC_OK);
+
+        given()
+                .body("{\"title\": \"Demo Todo\", \"order\": \"1\", \"completed\": \"true\"}")
+                .header("Content-Type", MediaType.APPLICATION_JSON)
+                .when()
+                .post("/todos")
+                .then()
+                .statusCode(HttpStatus.SC_OK)
+                .body("title", equalTo("Demo Todo"));
+
+        given()
+                .body("{\"title\": \"Another Todo\", \"order\": \"2\", \"completed\": \"false\"}")
+                .header("Content-Type", MediaType.APPLICATION_JSON)
+                .when()
+                .post("/todos")
+                .then()
+                .statusCode(HttpStatus.SC_OK)
+                .log().body()
+                .body("title", equalTo("Another Todo"));
+
+        given()
+            .when().get("/todos/statistics")
+            .then()
+            .statusCode(HttpStatus.SC_OK)
+            .body("$.size()", is(2))
+            .body("find { it.completed == true && it.count == 1 }", not(nullValue()))
+            .body("find { it.completed == false && it.count == 1 }", not(nullValue()));
+    }
 }

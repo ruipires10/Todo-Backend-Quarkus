@@ -1,4 +1,4 @@
-package es.torres;
+package es.torres.entitiy;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import java.net.MalformedURLException;
@@ -12,6 +12,7 @@ import jakarta.ws.rs.core.UriBuilder;
 public class Todo extends PanacheEntity {
 
     private String title;
+    @Column(columnDefinition = "boolean default false")
     private Boolean completed;
     @Column(name = "\"order\"")
     private Integer order;
