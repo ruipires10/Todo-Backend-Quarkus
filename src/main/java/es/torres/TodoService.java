@@ -3,6 +3,7 @@ package es.torres;
 import es.torres.dto.InputTodoDto;
 import es.torres.dto.OutputTodoDto;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.transaction.Transactional;
 import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.UriInfo;
@@ -59,6 +60,22 @@ public class TodoService {
         Todo byId = optional.orElseThrow(() -> new NotFoundException("Todo does not exist!"));
         merge(byId, updates);
         return mapEntityToDto(byId);
+    }
+
+    @Transactional
+    public void reactivateAll() {
+        List<Todo> todos = Todo.listAll();
+        for(Todo todo : todos) {
+            if(todo.getCompleted()) {
+                reactivateTodo(todo);
+            }
+        }
+    }
+
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
+    private void reactivateTodo (Todo todo) {
+        todo.setCompleted(false);
+        todo.persist();
     }
 
     private void merge(Todo current, InputTodoDto todoItem) {

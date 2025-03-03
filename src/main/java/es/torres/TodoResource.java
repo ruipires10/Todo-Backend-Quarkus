@@ -76,4 +76,13 @@ public class TodoResource {
     public OutputTodoDto edit(@PathParam("id") Long id, InputTodoDto updates) {
        return todoService.editById(id, updates);
     }
+
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Transactional
+    public Response reactivateAll() {
+        todoService.reactivateAll();
+        return Response.ok().build();
+    }
 }
